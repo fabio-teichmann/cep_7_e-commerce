@@ -32,12 +32,12 @@ jobs:
         terraform init
         terraform validate
         terraform apply -auto-approve
-        terraform output > backend.config
+        terraform output > ~/work/backend.config
     
     - name: list files
       run: |
         ls -R
-        ls -a ~/.
+        ls -a ~/work/.
     
     - name: upload state
       uses: actions/upload-artifact@v4
