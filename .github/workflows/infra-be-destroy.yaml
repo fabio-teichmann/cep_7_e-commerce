@@ -24,5 +24,4 @@ jobs:
     - name: destroy-backend
       working-directory: terraform/backend/
       run: |
-        terraform init
         terraform destroy -auto-approve
