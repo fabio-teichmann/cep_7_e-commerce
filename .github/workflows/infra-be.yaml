@@ -32,7 +32,7 @@ jobs:
         terraform init
         terraform validate
         terraform apply -auto-approve
-        terraform output > ~/work/backend.config
+        terraform output > backend.config
     
     - name: list files
       run: |
@@ -43,10 +43,10 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: terraform-tfstate
-        path: terraform.tfstate
+        path: ./terraform/backend/terraform.tfstate
 
     - name: upload config
       uses: actions/upload-artifact@v4 
       with:
         name: backend-config
-        path: backend.config
+        path: ./terraform/backend/backend.config
