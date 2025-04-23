@@ -2,7 +2,6 @@
 
 provider "aws" {
     region = var.aws_region
-    profile = "cep-7-admin"
 }
 
 resource "aws_s3_bucket" "tf-state" {
