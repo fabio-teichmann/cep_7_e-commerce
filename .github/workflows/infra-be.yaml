@@ -25,7 +25,7 @@ jobs:
         aws-region: ${{ vars.TF_AWS_REGION }}
         aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
-
+        
     - name: init-and-validate
       working-directory: terraform/backend/
       run: |
