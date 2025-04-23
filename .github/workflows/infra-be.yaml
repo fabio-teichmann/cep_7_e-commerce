@@ -19,13 +19,18 @@ jobs:
     - name: setup-terraform
       uses: hashicorp/setup-terraform@v3
 
+    - name: authenticate-to-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ variables.TF_AWS_REGION }}
+
     - name: init-and-validate
       working-directory: terraform/backend/
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
       run: |
         terraform init
+        terraform validate
         terraform apply -auto-approve
         terraform output > backend.config
         cat backend.config
