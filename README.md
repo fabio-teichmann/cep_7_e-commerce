@@ -64,7 +64,7 @@ For ES we need to consider factors that can influence both, CPU and EBS (elastic
 ## Data Ingestion (Kinesis)
 Data ingestion will happen over a Kineses Streaming job, over to Kinesis Firehose and into an S3 bucket (Datalake and landing zone). This means that the application needs to register order events on Kinesis.
 
-> [!INFO]
+> [!NOTE]
 > Kinesis will likely produce duplicate records which needs to be taken care of properly to ensure orders don't get processed or counted multiple times.
 
 
