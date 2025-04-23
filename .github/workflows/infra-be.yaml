@@ -27,6 +27,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         
     - name: init-and-validate
+      id: tf_apply
       working-directory: terraform/backend/
       run: |
         terraform init
@@ -34,22 +35,17 @@ jobs:
         terraform apply -auto-approve
         terraform output > backend.config
 
-        export BUCKET_NAME=$(awk -F '=' '/bucket/ {
+        echo "value=$(awk -F '=' '/bucket/ {
             gsub(/^[ \t]+|[ \t]+$/, "", $2);    
             gsub(/^"|"$/, "", $2);              
             print $2
-        }' backend.config)
-    
-    - name: list files
-      run: |
-        ls -R
-        ls -a ~/work/.
+        }' backend.config)" >> $GITHUB_OUTPUT
+
+        echo $GITHUB_OUTPUT
     
     - name: upload state
-      env:
-        bucket_name: ${{ env.BUCKET_NAME }}
       run: |
-        aws s3 mv ./terraform/backend/terraform.tfstate s3://${bucket_name}/tf-backend/terraform.tfstate
+        aws s3 mv ./terraform/backend/terraform.tfstate s3://${{ steps.tf_apply.outputs.value }}/tf-backend/terraform.tfstate
       # uses: actions/upload-artifact@v4
       # with:
       #   name: terraform-tfstate
