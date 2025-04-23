@@ -19,9 +19,10 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ variables.TF_AWS_REGION }}
+        aws-region: ${{ vars.TF_AWS_REGION }}
     
     - name: destroy-backend
       working-directory: "terraform/backend"
       run: |
+        terraform init
         terraform destroy -auto-approve
