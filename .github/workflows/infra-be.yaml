@@ -33,7 +33,9 @@ jobs:
         terraform validate
         terraform apply -auto-approve
         terraform output > backend.config
-        ls -a .
+    
+    - name: list files
+      run: ls -R
     
     - name: upload state
       uses: actions/upload-artifact@v4
