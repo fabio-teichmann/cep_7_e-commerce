@@ -33,4 +33,15 @@ jobs:
         terraform validate
         terraform apply -auto-approve
         terraform output > backend.config
-        cat backend.config
+    
+    - name: upload state
+      uses: actions/upload-artifact@v4
+      with:
+        name: terraform.tfstate
+        path: terraform.tfstate
+
+    - name: upload config
+      uses: actions/upload-artifact@v4 
+      with:
+        name: backend.config
+        path: backend.config
