@@ -7,6 +7,10 @@ The TerraForm setup will include to basic principles:
 2. state-lock for team collaboration
 
 
+## Application (EKS)
+The application will be hosted on EKS for scalability.
+
+
 ## ElasticSearch (ES)
 ElasticSearch (ES) is a read-optimized cache for search.
 
@@ -29,7 +33,7 @@ ES is resource hungry (need to ensure the processing nodes have enough CPU and R
 
 ES especially shines with scale (~>10M entries). There are no safety issues per-se with duplicating the data (product catalogue).
 
-> [!INFO]
+> [!NOTE]
 > ElasticSearch is appropriate to provide the full-text search functionality at scale for this application.
 
 
@@ -40,7 +44,8 @@ For the MVP of this project, we will start with EC2-managed nodes for ES. This u
 
 Later, we will consider to migrate to ECK (Elastic Cloud on Kubernetes) for tighter GitOps integration, auto-scaling, or dynamic environment setup.
 
-> [!IMPORTANT] Running ES on EKS is operationally non-trivial: it involves StatefulSets, persistent volumes, readiness probes, node affinities, etc. It’s easy to break cluster consistency if misconfigured.
+> [!IMPORTANT] 
+> Running ES on EKS is operationally non-trivial: it involves StatefulSets, persistent volumes, readiness probes, node affinities, etc. It’s easy to break cluster consistency if misconfigured.
 
 
 ### ES Node updates:
@@ -57,8 +62,26 @@ For ES we need to consider factors that can influence both, CPU and EBS (elastic
 
 
 ## Data Ingestion (Kinesis)
-...
+Data ingestion will happen over a Kineses Streaming job, over to Kinesis Firehose and into an S3 bucket (Datalake and landing zone). This means that the application needs to register order events on Kinesis.
+
+> [!INFO]
+> Kinesis will likely produce duplicate records which needs to be taken care of properly to ensure orders don't get processed or counted multiple times.
 
 
 ## Data Layer
-...
+For the data layer, I will implement a "Bronze-Silver-Gold" system. For the table format, I chose **Apache Iceberg** on EMR (EC2-based) to have scalable and high-throughput data handling capabilities. After events are ingested into S3 (bronze), spark-jobs ran periodically will convert new data into silver and gold layer tables. This will take care of deduplication as well.
+
+Prerequisites for this setup:
+- AWS Glue catalog registers database names for bronze, silver, and gold
+- S3 bucket with startup script for Iceberg and spark job scripts
+- EMR steps configured for initial setup and recurring spark jobs
+
+The bronze layer will run regular purging jobs to avoid accumulation of data over time (delete raw data older than 90 days).
+
+
+## Analytics
+As a base setup, I will use AWS Athena and Quicksight for quick and BI-level insights. Athena as a query engine integrates well with Iceberg. The b-s-g layers structure the data for relevant insights.
+
+
+## Monitoring
+- monitor failed spark jobs for data conversion / purging
