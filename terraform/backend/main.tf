@@ -6,6 +6,7 @@ provider "aws" {
 
 resource "aws_s3_bucket" "tf-state" {
     bucket = "cep-7-tf-state"
+    force_destroy = true
     tags = {
         Name = "terraform-state-lock"
         Environment = "dev"
