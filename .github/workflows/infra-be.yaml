@@ -1,0 +1,29 @@
+# test TerraForm with
+# - terraform validate
+# - tflint
+# - checkov
+
+name: TerraForm Backend
+
+on:
+  workflow_dispatch:
+
+jobs:
+  provide-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    
+    - name: setup-terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: init-and-validate
+      working-directory: terraform/backend/
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+      run: |
+        terraform init
+        terraform validate
