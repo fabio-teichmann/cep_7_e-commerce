@@ -33,6 +33,12 @@ jobs:
         terraform validate
         terraform apply -auto-approve
         terraform output > backend.config
+
+        export BUCKET_NAME=$(awk -F '=' '/bucket/ {
+            gsub(/^[ \t]+|[ \t]+$/, "", $2);    
+            gsub(/^"|"$/, "", $2);              
+            print $2
+        }' backend.config)
     
     - name: list files
       run: |
@@ -40,13 +46,17 @@ jobs:
         ls -a ~/work/.
     
     - name: upload state
-      uses: actions/upload-artifact@v4
-      with:
-        name: terraform-tfstate
-        path: ./terraform/backend/terraform.tfstate
+      env:
+        bucket_name: ${{ env.BUCKET_NAME }}
+      run: |
+        aws s3 mv ./terraform/backend/terraform.tfstate s3://${bucket_name}/tf-backend/terraform.tfstate
+      # uses: actions/upload-artifact@v4
+      # with:
+      #   name: terraform-tfstate
+      #   path: ./terraform/backend/terraform.tfstate
 
-    - name: upload config
-      uses: actions/upload-artifact@v4 
-      with:
-        name: backend-config
-        path: ./terraform/backend/backend.config
+    # - name: upload config
+    #   uses: actions/upload-artifact@v4 
+    #   with:
+    #     name: backend-config
+    #     path: ./terraform/backend/backend.config
