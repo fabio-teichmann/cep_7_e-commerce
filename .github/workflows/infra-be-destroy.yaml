@@ -24,4 +24,6 @@ jobs:
     - name: destroy-backend
       working-directory: terraform/backend/
       run: |
+        cat backend.config
+        terraform init -reconfigure -backend-config=backend.config
         terraform destroy -auto-approve
