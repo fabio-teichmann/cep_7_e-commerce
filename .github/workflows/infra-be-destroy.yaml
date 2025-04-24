@@ -14,16 +14,16 @@ jobs:
     - name: setup-terraform
       uses: hashicorp/setup-terraform@v3
 
-    - name: acquire state
-      run: |
-        aws s3 mv s3://cep-7-static/terraform/backend/terraform.tfstate ./terraform/backend/terraform.tfstate
-
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ vars.TF_AWS_REGION }}
+
+    - name: acquire-state
+      run: |
+        aws s3 mv s3://cep-7-static/terraform/backend/terraform.tfstate ./terraform/backend/terraform.tfstate
     
     - name: destroy-backend
       working-directory: terraform/backend/
