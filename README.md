@@ -3,8 +3,15 @@ Advanced Scalable E-commerce Web Application with Real-Time Streaming, Security,
 
 ## TerraForm setup
 The TerraForm setup will include to basic principles:
-1. a tailored IAM role for TerraForm actions &rarr will limit potential actions that terraform can do and help with observability
-2. state-lock for team collaboration
+1. state-lock for team collaboration
+2. a tailored IAM role for TerraForm actions &rarr will limit potential actions that terraform can do and help with observability (stretch)
+
+> [!IMPORTANT]
+> A completely automated TerraForm setup for state-lock with separate CI/CD jobs isn't possible or needs some hard-coding (which is what I want to avoid as much as possible). To pass necessary state information between jobs, I will manually set up a static S3 bucket to accommodate data to pass between jobs.
+
+
+## GitHub Actions (CI/CD)
+TBD
 
 
 ## Application (EKS)
