@@ -14,10 +14,9 @@ jobs:
     - name: setup-terraform
       uses: hashicorp/setup-terraform@v3
 
-    - name: get state
-      uses: actions/download-artifact@v4
-      with:
-        name: terraform-tfstate
+    - name: acquire state
+      run: |
+        aws s3 mv s3://cep-7-static/terraform/backend/terraform.tfstate ./terraform/backend/terraform.tfstate
 
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
@@ -32,7 +31,4 @@ jobs:
         terraform init
         terraform state pull
         terraform destroy -auto-approve
-
-# cat backend.config
-        # terraform init -reconfigure -backend-config=backend.config
         
