@@ -90,5 +90,39 @@ The bronze layer will run regular purging jobs to avoid accumulation of data ove
 As a base setup, I will use AWS Athena and Quicksight for quick and BI-level insights. Athena as a query engine integrates well with Iceberg. The b-s-g layers structure the data for relevant insights.
 
 
-## Monitoring
-- monitor failed spark jobs for data conversion / purging
+## Observability
+Let's define what elements should be included for monitoring in this architecture:
+
+| Component | :mag: Observability Needs |
+| :-- | :-- |
+| EKS (Flask app) | Pod health, app logs, request metrics, error rates, resource usage (CPU/mem) |
+| Kinesis (Streams + Firehose) | Throughput metrics (records in/out, throttling, iterator age), delivery failures |
+| EMR (Spark Jobs) | Job execution logs, step-level monitoring, cluster health, executor metrics |
+| S3 (Iceberg tables) | Storage metrics, access patterns, failed reads/writes (CloudTrail, optionally object-level logs) |
+| ElasticSearch | Cluster health, query latency, indexing rates, slow logs |
+| Athena Queries | Query success/failure metrics, scan sizes, query durations |
+| Glue Data Catalog | API usage logging, service errors (minor compared to others) |
+| Overall Infrastructure | Resource consumption, cost observability (budget alerts optional), service quotas |
+
+To collect and visualize loggs and metrics and issue alerts, I will work mostly with AWS CloudWatch, Grafana + Prometheus for a leightweight setup. I considered the ELK-stack as well, but decided against the operational overhead this would create, as well as the right-sizing considerations needed to control costs for ELK.
+
+Considerations by component:
+
+### EKS (Flask App)
+- enable Fluent Bit as `DaemonSet` for log collection
+- install Prometheus and Grafana
+
+### Kinesis
+- native integration with CloudWatch
+- set CloudWatch Alarms on: (a) `IteratorAgeMilliseconds > threshold` (lagging consumers), and (b) `PutRecord` errors
+
+### EMR (PySpark jobs)
+- enable EMR debugging &rarr automatically pushes logs to S3 + CloudWatch
+- install CloudWatch agent on EMR nodes
+
+### ElasticSearch
+- enable slow logs &rarr slow search queries + indexing events for optimization
+
+### Athena/Glue
+- CloudWatch metrics for Athena
+- catalog API usage metrics
