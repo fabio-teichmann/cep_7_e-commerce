@@ -17,11 +17,13 @@
             <li>
                 <strong>{{ product.name }}</strong><br>
                 Price: ${{ product.price }}<br>
+                Description: {{ product.description }}<br>
                 <form action="{{ url_for('orders.place_order') }}" method="POST">
                     <input type="hidden" name="product_id" value="{{ product.id }}">
                     <button type="submit">Order</button>
                 </form>
             </li>
+            <br>
         {% else %}
             <li>No products found.</li>
         {% endfor %}

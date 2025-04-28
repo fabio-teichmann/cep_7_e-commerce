@@ -1,3 +1,11 @@
 # TerraForm
 **/.terraform*
 **/terraform.tfstate*
+
+# Python
+**/.venv
+**/__pycache__
+**/.env
+
+# iOS
+**.DS_Store
