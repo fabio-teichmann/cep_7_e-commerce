@@ -18,7 +18,7 @@ jobs:
       - run: ruff format
 
   pylint:
-    needs: [ruff]
+    needs: [ruff-format]
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +40,7 @@ jobs:
         pylint $(git ls-files '*.py') --fail-under=8.5
   
   docker-image:
-    needs: [pylint, ruff]
+    needs: [pylint, ruff-format]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4 
