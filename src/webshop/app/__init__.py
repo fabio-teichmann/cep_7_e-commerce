@@ -1,4 +1,4 @@
-import logging
+""" application factory """
 import logfire
 from flask import Flask
 from .config import Config

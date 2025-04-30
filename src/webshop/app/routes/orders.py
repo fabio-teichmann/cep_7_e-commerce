@@ -1,3 +1,5 @@
+"""orders API"""
+
 import time
 import random
 import logfire
@@ -20,6 +22,8 @@ def process_order(product, user_id="auto_user", quantity=1, notes="auto ordered"
 
     # post to Kinesis Stream
     logfire.info(f"post order to kinesis {current_app.config['KINESIS_TOPIC']}")
+    order = [user_id, quantity, notes]
+    print(order)
     return True
 
 
