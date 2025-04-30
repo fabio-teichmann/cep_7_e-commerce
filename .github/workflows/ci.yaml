@@ -7,7 +7,18 @@ on:
       - main
 
 jobs:
+  ruff-format:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+      
+      - run: ruff format
+
   pylint:
+    needs: [ruff]
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +40,7 @@ jobs:
         pylint $(git ls-files '*.py') --fail-under=8.5
   
   docker-image:
+    needs: [pylint, ruff]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4 
@@ -47,11 +59,11 @@ jobs:
     #     password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-    -
-      name: Build and push
+    
+    - name: Build and push
       uses: docker/build-push-action@v6
       with:
         context: ./src/webshop/
         push: true
-        tags: webshop/app:latest
+        tags: ${{ vars.DOCKERHUB_USER }}webshop/app:latest
         
