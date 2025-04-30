@@ -1,3 +1,5 @@
+""" resources needed by the app """
+
 import os
 from dotenv import load_dotenv
 
