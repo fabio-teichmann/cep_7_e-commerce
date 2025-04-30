@@ -19,7 +19,8 @@
                 Price: ${{ product.price }}<br>
                 Description: {{ product.description }}<br>
                 <form action="{{ url_for('orders.place_order') }}" method="POST">
-                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <input type="hidden" name="user_id" value="test_user">
+                    <input type="hidden" name="product" value="{{ product }}">
                     <button type="submit">Order</button>
                 </form>
             </li>
