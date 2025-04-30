@@ -65,5 +65,5 @@ jobs:
       with:
         context: ./src/webshop/
         push: true
-        tags: ${{ vars.DOCKERHUB_USER }}/webshop/app:latest
+        tags: ${{ vars.DOCKERHUB_USER }}/webshop-app:latest
         
