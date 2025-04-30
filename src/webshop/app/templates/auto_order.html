@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto Order Console</title>
+</head>
+<body>
+    <h1>Auto Ordering Dashboard</h1>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <form action="{{ url_for('orders.start_auto_order') }}" method="post">
+            <button type="submit">Start Auto Order</button>
+        </form>
+        <form action="{{ url_for('orders.stop_auto_order') }}" method="post">
+            <button type="submit">Stop Auto Order</button>
+        </form>
+        <button onclick="location.href='/'">Back to Home</button>
+    </div>
+
+    <hr>
+
+    <h2><a href="{{ logs_url }}" target="_blank" rel="noopener noreferrer">LogFire Dashboard</a></h2>
+</body>
+</html>
