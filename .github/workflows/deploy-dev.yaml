@@ -1,13 +1,12 @@
-name: TerraForm Backend
+name: Deploy Dev Environment
 
 on:
   workflow_dispatch:
 
 jobs:
-  provide-backend:
+  build-infra:
     runs-on: ubuntu-latest
-
-    steps:
+    steps: 
     - name: checkout
       uses: actions/checkout@v4
     
@@ -20,17 +19,17 @@ jobs:
         aws-region: ${{ vars.TF_AWS_REGION }}
         aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+
+    - name: download backend.config
+      run: |
+        aws s3 cp s3://cep-7-static/terraform/backend/backend.config ./terraform/environments/dev/backend.config
         
     - name: init-and-validate
       id: tf_apply
-      working-directory: terraform/backend/
+      working-directory: terraform/environments/dev/
       run: |
-        terraform init
+        terraform init -backend-config=backend.config
         terraform validate
         terraform apply -auto-approve
-        terraform output > backend.config
     
-    - name: upload state & config
-      run: |
-        aws s3 cp ./terraform/backend/terraform.tfstate s3://cep-7-static/terraform/backend/terraform.tfstate
-        aws s3 cp ./terraform/backend/backend.config s3://cep-7-static/terraform/backend/backend.config
+    

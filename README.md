@@ -11,7 +11,11 @@ The TerraForm setup will include to basic principles:
 
 
 ## GitHub Actions (CI/CD)
-TBD
+The following flows are defined:
+- `infra-be` (manual) $rarr; automatically creates components required for state-lock (IMPORTANT: needs a static bucket to write state and be-config to)
+- `infra-be-destroy` (manual) $rarr; fetches the state of the backend and destroys the state-lock components
+- `ci` (on push) $rarr; linting, formatting, testing of code
+- `deploy-dev` (manual) $rarr; created all infrastructure for the web shop (IMPORTANT: depends on `infra-be` for the be-config file)
 
 
 ## Application (EKS)
@@ -69,10 +73,12 @@ For ES we need to consider factors that can influence both, CPU and EBS (elastic
 
 
 ## Data Ingestion (Kinesis)
-Data ingestion will happen over a Kineses Streaming job, over to Kinesis Firehose and into an S3 bucket (Datalake and landing zone). This means that the application needs to register order events on Kinesis.
+Data ingestion will happen over a Kineses Streaming job, over to Kinesis Firehose and into an S3 bucket (Datalake and landing zone). This means that the application needs to register order events on Kinesis. Kinesis **will not write directly to Iceberg tables**. Instead, a SparkJob will periodically fetch raw data and ingest it into Iceberg.
 
 > [!NOTE]
 > Kinesis will likely produce duplicate records which needs to be taken care of properly to ensure orders don't get processed or counted multiple times.
+
+The SparkJob will take care of deduplication.
 
 
 ## Data Layer

@@ -4,7 +4,7 @@ output "bucket" {
 }
 
 output "key"{
-    value = "envs/dev/terraform.tfstate"
+    value = "environments/dev/terraform.tfstate"
 }
 
 output "region" {
