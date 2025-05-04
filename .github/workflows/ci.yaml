@@ -1,4 +1,9 @@
 # Basic checks for linting, syntax errors, formatting, ...
+# test TerraForm with
+# - terraform validate
+# - tflint
+# - checkov
+
 name: App CI/CD
 
 on: 
