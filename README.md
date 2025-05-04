@@ -12,10 +12,10 @@ The TerraForm setup will include to basic principles:
 
 ## GitHub Actions (CI/CD)
 The following flows are defined:
-- `infra-be` (manual) $rarr; automatically creates components required for state-lock (IMPORTANT: needs a static bucket to write state and be-config to)
-- `infra-be-destroy` (manual) $rarr; fetches the state of the backend and destroys the state-lock components
-- `ci` (on push) $rarr; linting, formatting, testing of code
-- `deploy-dev` (manual) $rarr; created all infrastructure for the web shop (IMPORTANT: depends on `infra-be` for the be-config file)
+- `infra-be` (manual) &rarr; automatically creates components required for state-lock (IMPORTANT: needs a static bucket to write state and be-config to)
+- `infra-be-destroy` (manual) &rarr; fetches the state of the backend and destroys the state-lock components
+- `ci` (on push) &rarr; linting, formatting, testing of code
+- `deploy-dev` (manual) &rarr; created all infrastructure for the web shop (IMPORTANT: depends on `infra-be` for the be-config file)
 
 
 ## Application (EKS)
