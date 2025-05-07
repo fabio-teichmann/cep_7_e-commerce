@@ -41,3 +41,17 @@ The goal is to have 2 separate actions, 1 to generate the state-lock infrastruct
 
 ## TerraForm
 
+## Iceberg
+
+### Data ingestion from S3 using Spark
+- use `s3a://` for paths to benefit from parallelism
+
+| :o: Issue | :mag_right: Investigation | :white_check_mark: Outcome |
+| :---- | :----- | :------- |
+| Spark will automatically read all data at the specified location. This includes potential re-reads of the same data. | How can this be streamlined to reduce I/O overhead? | - Pre-order data coming in by partitioning (e.g., by timestamp)<br>- Use checkpoints (separate file) to keep track of already read files. |
+| | | |
+
+### Schema evolution
+| :o: Issue | :mag_right: Investigation | :white_check_mark: Outcome |
+| :---- | :----- | :------- |
+| Neither Spark nor Iceberg automatically update schema changes. Iceberg provides flexibility to do so but not automatically. | What are best practices around handling schema evolution? | 1. Specify schemas explicitly when reading data<br>2. When schema changes are detected, **manually trigger** the schema change to record it in Iceberg<br>3. reprocess any data that may have fallen off before the schema evolution. |
