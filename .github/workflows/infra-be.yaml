@@ -1,4 +1,4 @@
-name: TerraForm Backend
+name: Deploy Backend (tfstate-lock)
 
 on:
   workflow_dispatch:

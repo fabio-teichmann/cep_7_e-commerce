@@ -1,4 +1,4 @@
-name: TerraForm Backend Destroy
+name: Destroy Backend
 
 on:
   workflow_dispatch:

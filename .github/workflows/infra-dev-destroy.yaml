@@ -1,4 +1,4 @@
-name: TerraForm Backend Destroy
+name: Destroy Dev 
 
 on:
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
 
     - name: acquire-state
       run: |
-        aws s3 mv s3://cep-7-tf-state/terraform/environments/dev/terraform.tfstate ./terraform/environments/dev/terraform.tfstate
+        aws s3 mv s3://cep-7-tf-state/environments/dev/terraform.tfstate ./terraform/environments/dev/terraform.tfstate
     
     - name: destroy-dev
       working-directory: terraform/environments/dev/
