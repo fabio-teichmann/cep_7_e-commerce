@@ -36,6 +36,7 @@ jobs:
     
     - name: outputs to github env 
       id: tf-outputs 
+      working-directory: terraform/environments/dev/
       run: |
         echo "KINESIS_STREAM_NAME=$(terraform output -raw kinesis_stream_name)" >> $GITHUB_ENV
         echo "EKS_CLUSTER_NAME=$(terraform output -raw eks_cluster_name)" >> $GITHUB_ENV
