@@ -93,7 +93,7 @@ jobs:
     - name: Helm deploy
       run: |
         helm upgrade --install webshop ./helm-charts/webshop \
-          --set image.repository=${{ vars.DOCKERHUB_USER }}/webshop
+          --set image.repository=${{ vars.DOCKERHUB_USER }}/webshop \
           --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
           --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}}
