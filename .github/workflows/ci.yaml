@@ -43,8 +43,30 @@ jobs:
     - name: check-code
       run: |
         pylint $(git ls-files '*.py') --fail-under=7.5
+
+  docker-hub:
+    needs: [pylint, ruff-format]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4 
+    
+    - name: log-in-docker-hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ vars.DOCKERHUB_USER }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build and push
+      uses: docker/build-push-action@v6
+      with:
+        context: ./src/webshop/
+        push: true
+        tags: ${{ vars.ECR_REPO }}/webshop:latest
   
-  docker-image:
+  aws-ecr:
     needs: [pylint, ruff-format]
     runs-on: ubuntu-latest
     steps:
@@ -66,31 +88,8 @@ jobs:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: webshop
         IMAGE_TAG: latest
-      with:
-        context: ./src/webshop/
       run: |
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./src/webshop/
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
     
-    # - name: log-in-docker-hub
-    #   uses: docker/login-action@v3
-    #   with:
-    #     username: ${{ vars.DOCKERHUB_USER }}
-    #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-    # - name: login-aws-ecr
-    #   uses: docker/login-action@v3
-    #   with:
-    #     registry: ${{ vars.ECR_REPO }}
-    #     username: ${{ vars.AWS_ACCESS_KEY_ID }}
-    #     password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-    # - name: Set up Docker Buildx
-    #   uses: docker/setup-buildx-action@v3
-    
-    # - name: Build and push
-    #   uses: docker/build-push-action@v6
-    #   with:
-    #     context: ./src/webshop/
-    #     push: true
-    #     tags: ${{ vars.ECR_REPO }}/webshop:latest
         
