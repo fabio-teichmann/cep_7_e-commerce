@@ -24,3 +24,19 @@ serviceAccount:
   name: ""
   automount: true
   annotations: {}
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  tls:
+    - hosts:
+        - "example.com"
+      secretName: "example-tls-secret"
+  hosts:
+    - host: "example.com"
+      paths:
+        - path: /
+          pathType: Prefix
