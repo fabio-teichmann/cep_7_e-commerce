@@ -38,8 +38,8 @@ jobs:
       id: tf-outputs 
       working-directory: terraform/environments/dev/
       run: |
-        echo "KINESIS_STREAM_NAME=$(terraform output -raw kinesis_stream_name)" >> $GITHUB_ENV
-        echo "EKS_CLUSTER_NAME=$(terraform output -raw eks_cluster_name)" >> $GITHUB_ENV
+        echo "KINESIS_STREAM_NAME=$(terraform output -raw kinesis_stream_name)" >> $GITHUB_OUTPUT
+        echo "EKS_CLUSTER_NAME=$(terraform output -raw eks_cluster_name)" >> $GITHUB_OUTPUT
 
     # - name: upload-artifact
     #   uses: actions/upload-artifact
@@ -110,13 +110,13 @@ jobs:
       run: |
         aws eks update-kubeconfig \
           --region ${{ vars.TF_AWS_REGION }} \
-          --name $EKS_CLUSTER_NAME
+          --name ${{ steps.tf-outputs.outputs.EKS_CLUSTER_NAME }}
 
     - name: Helm deploy
       run: |
         helm upgrade --install webshop ./helm-charts/webshop \
           --set image.repository=${{ vars.DOCKERHUB_USER }}/webshop
-          --set env.kinesisStreamName=$KINESIS_STREAM_NAME \
+          --set env.kinesisStreamName=${{ steps.tf-outputs.outputs.KINESIS_STREAM_NAME }} \
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
           --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}}
     
