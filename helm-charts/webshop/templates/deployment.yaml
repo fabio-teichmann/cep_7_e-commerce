@@ -28,7 +28,7 @@ spec:
               valueFrom: 
                 configMapKeyRef:
                   name: app-config 
-                  key: LOGFRE_URL
+                  key: LOGFIRE_URL
             - name: LOGFIRE_TOKEN 
               valueFrom:
                 secretKeyRef:
