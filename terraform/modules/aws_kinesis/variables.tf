@@ -10,7 +10,7 @@ variable "kinesis_stream_name" {
 
 variable "data_lake" {
     type = string
-    default = "data_lake"
+    default = "cep-7-data_lake"
 }
 
 variable "data_lake_prefix_firehose" {
