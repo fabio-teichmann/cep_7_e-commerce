@@ -49,26 +49,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4 
+
+    - name: authenticate-to-aws
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.TF_AWS_REGION }}
+        aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push docker image to Amazon ECR
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: webshop
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
     
     # - name: log-in-docker-hub
     #   uses: docker/login-action@v3
     #   with:
     #     username: ${{ vars.DOCKERHUB_USER }}
     #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: login-aws-ecr
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ vars.ECR_REPO }}
-        username: ${{ vars.AWS_ACCESS_KEY_ID }}
-        password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    # - name: login-aws-ecr
+    #   uses: docker/login-action@v3
+    #   with:
+    #     registry: ${{ vars.ECR_REPO }}
+    #     username: ${{ vars.AWS_ACCESS_KEY_ID }}
+    #     password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+    # - name: Set up Docker Buildx
+    #   uses: docker/setup-buildx-action@v3
     
-    - name: Build and push
-      uses: docker/build-push-action@v6
-      with:
-        context: ./src/webshop/
-        push: true
-        tags: ${{ vars.ECR_REPO }}/webshop:latest
+    # - name: Build and push
+    #   uses: docker/build-push-action@v6
+    #   with:
+    #     context: ./src/webshop/
+    #     push: true
+    #     tags: ${{ vars.ECR_REPO }}/webshop:latest
         
