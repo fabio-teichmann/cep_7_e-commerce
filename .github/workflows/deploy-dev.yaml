@@ -64,8 +64,12 @@ jobs:
       id: extract
       run: |
         eks_cluster_name=$(jq -r '.eks_cluster_name' tf-outputs.json)
-        echo "extracted value: $eks_cluster_name"
-        echo "eks_cluster_name=$eks_cluster_name" >> "$GITHUB_OUTPUT"
+        echo "extracted value: $eks_cluster_name.value"
+        echo "eks_cluster_name=$eks_cluster_name.value" >> "$GITHUB_OUTPUT"
+
+        kinesis_stream_name=$(jq -r '.kinesis_stream_name' tf-outputs.json)
+        echo "extracted value: $kinesis_stream_name.value"
+        echo "kinesis_stream_name=$kinesis_stream_name.value" >> "$GITHUB_OUTPUT"
     
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
@@ -80,13 +84,13 @@ jobs:
         echo "ClusterName -- ${{ steps.extract.outputs.eks_cluster_name }}"
         aws eks update-kubeconfig \
           --region ${{ vars.TF_AWS_REGION }} \
-          --name ${{ steps.tf-outputs.outputs.EKS_CLUSTER_NAME }}
+          --name ${{ steps.extract.outputs.eks_cluster_name }}
 
     - name: Helm deploy
       run: |
         helm upgrade --install webshop ./helm-charts/webshop \
           --set image.repository=${{ vars.DOCKERHUB_USER }}/webshop
-          --set env.kinesisStreamName=${{ steps.tf-outputs.outputs.KINESIS_STREAM_NAME }} \
+          --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
           --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}}
     
