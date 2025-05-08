@@ -11,7 +11,7 @@ import boto3
 bp = Blueprint("orders", __name__, url_prefix="/order", template_folder="routes")
 AUTO_ORDER_FLAG = {"active": False}
 
-kinesis_client = boto3.client("kinesis")
+kinesis_client = boto3.client("kinesis", region_name="us-east-1")
 
 def process_order(product, user_id="auto_user", quantity=1, notes="auto ordered"):
     """Processes the order and posts it to a Kinesis Stream.
