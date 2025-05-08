@@ -32,7 +32,7 @@ jobs:
         terraform validate
         terraform apply -auto-approve \
           -var="image_repo=${{ vars.ECR_REPO }}"
-        terraform outputs -json > tf-outputs.json
+        # terraform output -json > tf-outputs.json
     
     - name: outputs to github env 
       id: tf-outputs 
