@@ -1,4 +1,4 @@
-name: Destroy Backend
+name: (4) Destroy Backend
 
 on:
   workflow_dispatch:
