@@ -16,3 +16,9 @@ service:
   targetPort: 5000
 
 resources: {}
+
+serviceAccount:
+  create: false
+  name: ""
+  automount: true
+  annotations: {}
