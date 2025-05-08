@@ -29,5 +29,6 @@ jobs:
       working-directory: terraform/environments/dev/
       run: |
         terraform init -backend-config=backend.config
-        terraform destroy -auto-approve
+        terraform destroy -auto-approve \
+          -var="image_repo=${{ vars.ECR_REPO }}"
         
