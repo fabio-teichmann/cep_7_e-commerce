@@ -32,7 +32,8 @@ module "vpc" {
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
   public_subnets  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   private_subnets = ["10.0.11.0/24", "10.0.12.0/24", "10.0.13.0/24"]
-
+  
+  map_public_ip_on_launch = true
   # enable_nat_gateway = true
   # single_nat_gateway = true
 
@@ -111,7 +112,7 @@ module "kinesis_pipeline" {
 
   environment                     = "dev"
   kinesis_stream_name             = "orders-stream"
-  data_lake                       = "data_lake"
+  data_lake                       = "cep-7-data_lake"
   data_lake_prefix_firehose       = "landing_zone/firehose_stream"
   data_lake_error_prefix_firehose = "landing_zone/firehose_stream_errors"
 }
