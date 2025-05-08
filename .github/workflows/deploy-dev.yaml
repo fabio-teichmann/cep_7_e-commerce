@@ -92,6 +92,11 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
+      
+    - name: download-artifact
+      uses: actions/download-artifact
+      with:
+        name: tf-outputs
 
     - name: extract-env-vars
       id: extract
