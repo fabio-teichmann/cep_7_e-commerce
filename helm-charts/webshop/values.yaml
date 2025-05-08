@@ -40,3 +40,10 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: "" 
