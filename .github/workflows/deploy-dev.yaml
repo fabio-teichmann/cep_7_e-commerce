@@ -43,7 +43,7 @@ jobs:
         echo "ClusterName -- ${{ steps.tf-outputs.outputs.EKS_CLUSTER_NAME }}"
 
     - name: upload-artifact
-      uses: actions/upload-artifact
+      uses: actions/upload-artifact@v4
       with:
         name: tf-outputs
         path: ./tf-outputs.json
@@ -55,7 +55,7 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
 
-    - name: download-artifact
+    - name: download-artifact@v4
       uses: actions/download-artifact
       with:
         name: tf-outputs
