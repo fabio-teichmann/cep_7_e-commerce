@@ -107,7 +107,7 @@ module "eks" {
 
 
 module "kinesis_pipeline" {
-  source = "../../modules/aws-kinesis"
+  source = "../../modules/aws_kinesis"
 
   environment                     = "dev"
   kinesis_stream_name             = "orders-stream"
