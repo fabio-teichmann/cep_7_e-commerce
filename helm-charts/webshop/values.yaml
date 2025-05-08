@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: <your-repo>/webshop
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 env:
   kinesisStreamName: ""
