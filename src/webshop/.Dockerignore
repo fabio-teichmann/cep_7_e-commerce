@@ -1,2 +1,3 @@
 .ruff_cache
 mock_data.json
+.env

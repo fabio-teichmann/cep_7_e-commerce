@@ -18,3 +18,19 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.targetPort }}
+          env: 
+            - name: KINESIS_STREAM_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config 
+                  key: KINESIS_STREAM_NAME
+            - name: LOGFIRE_URL 
+              valueFrom: 
+                configMapKeyRef:
+                  name: app-config 
+                  key: LOGFRE_URL
+            - name: LOGFIRE_TOKEN 
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets 
+                  key: LOGFIRE_TOKEN 

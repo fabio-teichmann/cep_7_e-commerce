@@ -2,29 +2,51 @@
 
 import time
 import random
+import json
 import logfire
 from flask import Blueprint, request, render_template, redirect, url_for, current_app
 from .catalog import get_products
-
+import boto3
 
 bp = Blueprint("orders", __name__, url_prefix="/order", template_folder="routes")
 AUTO_ORDER_FLAG = {"active": False}
 
+kinesis_client = boto3.client("kinesis")
 
 def process_order(product, user_id="auto_user", quantity=1, notes="auto ordered"):
-    """processes the order and posts it to Kinesis Stream.
-    Simulates order failure for 20% of cases"""
-    # simulate occasionally failing orders
-    failed_order = random.randint(1, 10) > 8
-    if failed_order:
-        logfire.error(f"order failed: {product['id']}")
+    """Processes the order and posts it to a Kinesis Stream.
+    Simulates order failure for ~20% of cases."""
+    
+    if random.random() < 0.2:
+        logfire.error(f"Order failed: {product.get('id')}")
         return False
 
-    # post to Kinesis Stream
-    logfire.info(f"post order to kinesis {current_app.config['KINESIS_TOPIC']}")
-    order = [user_id, quantity, notes]
-    print(order)
-    return True
+    order = {
+        "user_id": user_id,
+        "product_id": product["id"],
+        "product_name": product["name"],
+        "product_price": product["price"],
+        "quantity": quantity,
+        "notes": notes
+    }
+
+    stream_name = current_app.config.get("KINESIS_STREAM_NAME")
+    if not stream_name:
+        logfire.error("Kinesis stream name not configured")
+        return False
+
+    try:
+        logfire.info(f"Posting order to Kinesis stream: {stream_name}")
+        response = kinesis_client.put_record(
+            StreamName=stream_name,
+            Data=json.dumps(order).encode("utf-8"),
+            PartitionKey=str(product["id"])
+        )
+        logfire.info(f"Kinesis response: {response}")
+        return True
+    except Exception as e:
+        logfire.error(f"Kinesis put_record failed: {e}")
+        return False
 
 
 @bp.route("/", methods=["POST"])
