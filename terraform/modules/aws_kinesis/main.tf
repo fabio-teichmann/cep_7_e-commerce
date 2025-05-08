@@ -124,6 +124,6 @@ resource "aws_kinesis_firehose_delivery_stream" "firehose_to_lake" {
         bucket_arn         = aws_s3_bucket.data_lake.arn
         compression_format = "UNCOMPRESSED"
         prefix = "${var.data_lake_prefix_firehose}/!{timestamp:yyyy/MM/dd}/"
-        error_output_prefix = "${var.data_lake_error_prefix_firehose}/!{timestamp:yyyy/MM/dd}/"
+        error_output_prefix = "${var.data_lake_error_prefix_firehose}/!{timestamp:yyyy/MM/dd}/!{firehose:error-output-type}/"
     }
 }
