@@ -118,7 +118,7 @@ module "kinesis_pipeline" {
 
   environment                     = "dev"
   kinesis_stream_name             = "orders-stream"
-  data_lake                       = "cep-7-data_lake-${random_string.bucket_suffix.result}"
+  data_lake                       = "cep-7-data-lake-${random_string.bucket_suffix.result}"
   data_lake_prefix_firehose       = "landing_zone/firehose_stream"
   data_lake_error_prefix_firehose = "landing_zone/firehose_stream_errors"
 }
