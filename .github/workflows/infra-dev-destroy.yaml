@@ -21,14 +21,13 @@ jobs:
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ vars.TF_AWS_REGION }}
 
-    - name: acquire-state
+    - name: acquire-backend.config
       run: |
-        aws s3 mv s3://cep-7-tf-state/environments/dev/terraform.tfstate ./terraform/environments/dev/terraform.tfstate
+        aws s3 cp s3://cep-7-static/terraform/backend/backend.config ./terraform/environments/dev/backend.config
     
     - name: destroy-dev
       working-directory: terraform/environments/dev/
       run: |
-        terraform init
-        terraform state pull
+        terraform init -backend-config=backend.config
         terraform destroy -auto-approve
         
