@@ -44,7 +44,6 @@ jobs:
       run: |
         pylint $(git ls-files '*.py') --fail-under=7.5
 
-
   docker-hub:
     needs: [pylint, ruff-format]
     runs-on: ubuntu-latest
@@ -65,33 +64,33 @@ jobs:
       with:
         context: ./src/webshop/
         push: true
-        tags: ${{ vars.ECR_REPO }}/webshop:latest
-  
+        tags: ${{ vars.DOCKERHUB_USER }}/webshop:latest
 
-  aws-ecr:
-    needs: [pylint, ruff-format]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4 
+  # NOTE: working flow, disabled temporarily for development purposes
+  # aws-ecr:
+  #   needs: [pylint, ruff-format]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4 
 
-    - name: authenticate-to-aws
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: ${{ vars.TF_AWS_REGION }}
-        aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+  #   - name: authenticate-to-aws
+  #     uses: aws-actions/configure-aws-credentials@v4
+  #     with:
+  #       aws-region: ${{ vars.TF_AWS_REGION }}
+  #       aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+  #       aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
+  #   - name: Login to Amazon ECR
+  #     id: login-ecr
+  #     uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Build, tag, and push docker image to Amazon ECR
-      env:
-        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        REPOSITORY: webshop
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./src/webshop/
-        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+  #   - name: Build, tag, and push docker image to Amazon ECR
+  #     env:
+  #       REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  #       REPOSITORY: webshop
+  #       IMAGE_TAG: latest
+  #     run: |
+  #       docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./src/webshop/
+  #       docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
     
         
