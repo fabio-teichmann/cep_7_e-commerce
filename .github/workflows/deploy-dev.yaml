@@ -33,6 +33,10 @@ jobs:
         terraform apply -auto-approve \
           -var="image_repo=${vars.ECR_REPO}"
 
+    - name: upload state & config
+      run: |
+        aws s3 cp ./terraform/environments/dev/terraform.tfstate s3://cep-7-static/terraform/environments/dev/terraform.tfstate
+
   deploy-app:
     needs: [build-infra]
     runs-on: ubuntu-latest
