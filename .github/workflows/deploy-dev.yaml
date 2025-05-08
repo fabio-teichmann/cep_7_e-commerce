@@ -46,7 +46,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: tf-outputs
-        path: ./tf-outputs.json
+        path: ./terraform/environments/dev/tf-outputs.json
 
   deploy-app:
     needs: [build-infra]
