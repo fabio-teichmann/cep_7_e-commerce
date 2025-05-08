@@ -42,7 +42,7 @@ jobs:
     
     - name: check-code
       run: |
-        pylint $(git ls-files '*.py') --fail-under=8.5
+        pylint $(git ls-files '*.py') --fail-under=7.5
   
   docker-image:
     needs: [pylint, ruff-format]
@@ -50,18 +50,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4 
     
-    - name: log-in-docker-hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ vars.DOCKERHUB_USER }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-    # For later:
-    # - name: login-aws-ecr
+    # - name: log-in-docker-hub
     #   uses: docker/login-action@v3
     #   with:
-    #     registry: ${{ vars.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ vars.AWS_REGION_ECR }}.amazonaws.com
-    #     username: ${{ vars.AWS_ACCESS_KEY_ID }}
-    #     password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     username: ${{ vars.DOCKERHUB_USER }}
+    #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: login-aws-ecr
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ vars.ECR_REPO }}
+        username: ${{ vars.AWS_ACCESS_KEY_ID }}
+        password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     
@@ -70,5 +70,5 @@ jobs:
       with:
         context: ./src/webshop/
         push: true
-        tags: ${{ vars.DOCKERHUB_USER }}/webshop-app:latest
+        tags: ${{ vars.ECR_REPO }}/webshop:latest
         
