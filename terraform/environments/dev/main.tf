@@ -41,36 +41,36 @@ module "vpc" {
   }
 }
 
-# module "eks" {
-#   source  = "terraform-aws-modules/eks/aws"
-#   version = "19.21.0"  # Latest stable as of May 2025
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "19.21.0"  # Latest stable as of May 2025
 
-#   cluster_name    = "webshop-eks"
-#   cluster_version = "1.29"
-#   subnet_ids      = module.vpc.public_subnets
-#   vpc_id          = module.vpc.vpc_id
+  cluster_name    = "webshop-eks"
+  cluster_version = "1.29"
+  subnet_ids      = module.vpc.public_subnets
+  vpc_id          = module.vpc.vpc_id
 
-#   enable_irsa = true
+  enable_irsa = true
 
-#   eks_managed_node_groups = {
-#     default = {
-#       min_size     = 1
-#       max_size     = 3
-#       desired_size = 2
+  eks_managed_node_groups = {
+    default = {
+      min_size     = 1
+      max_size     = 3
+      desired_size = 2
 
-#       instance_types = ["t3.medium"]
-#       capacity_type  = "SPOT"
-#     }
-#   }
+      instance_types = ["t3.medium"]
+      capacity_type  = "SPOT"
+    }
+  }
 
-#   cluster_endpoint_public_access       = true
-#   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"] # restrict in production
+  cluster_endpoint_public_access       = true
+  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"] # restrict in production
 
-#   tags = {
-#     Environment = "dev"
-#     Terraform   = "true"
-#   }
-# }
+  tags = {
+    Environment = "dev"
+    Terraform   = "true"
+  }
+}
 
 
 
@@ -106,12 +106,12 @@ module "vpc" {
 
 
 
-# module "kinesis_pipeline" {
-#   source = "../../modules/aws-kinesis"
+module "kinesis_pipeline" {
+  source = "../../modules/aws-kinesis"
 
-#   environment                     = "dev"
-#   kinesis_stream_name             = "orders-stream"
-#   data_lake                       = "data_lake"
-#   data_lake_prefix_firehose       = "landing_zone/firehose_stream"
-#   data_lake_error_prefix_firehose = "landing_zone/firehose_stream_errors"
-# }
+  environment                     = "dev"
+  kinesis_stream_name             = "orders-stream"
+  data_lake                       = "data_lake"
+  data_lake_prefix_firehose       = "landing_zone/firehose_stream"
+  data_lake_error_prefix_firehose = "landing_zone/firehose_stream_errors"
+}

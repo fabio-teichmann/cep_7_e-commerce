@@ -5,6 +5,11 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+env:
+  kinesisStreamName: ""
+  logfireUrl: "" 
+  logfireToken: "" 
+
 service:
   type: LoadBalancer
   port: 80

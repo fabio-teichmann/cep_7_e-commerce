@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  KINESIS_STREAM_NAME: {{ .Values.env.kinesisStreamName }}
+  LOGFIRE_URL: {{ .Values.env.logfireUrl }}
