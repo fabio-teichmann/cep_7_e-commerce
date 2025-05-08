@@ -67,11 +67,11 @@ jobs:
     - name: extract-env-vars
       id: extract
       run: |
-        eks_cluster_name=$(jq -r '.eks_cluster_name' tf-outputs.json)
+        eks_cluster_name=$(jq -r '.eks_cluster_name.value' tf-outputs.json)
         echo "extracted value: $eks_cluster_name"
         echo "eks_cluster_name=$eks_cluster_name" >> "$GITHUB_OUTPUT"
 
-        kinesis_stream_name=$(jq -r '.kinesis_stream_name' tf-outputs.json)
+        kinesis_stream_name=$(jq -r '.kinesis_stream_name.value' tf-outputs.json)
         echo "extracted value: $kinesis_stream_name"
         echo "kinesis_stream_name=$kinesis_stream_name" >> "$GITHUB_OUTPUT"
     
