@@ -76,7 +76,7 @@ jobs:
     
     - name: Set up kubeconfig for EKS
       run: |
-        echo "ClusterName -- ${{ steps.tf-outputs.outputs.EKS_CLUSTER_NAME }}"
+        echo "ClusterName -- ${{ needs.tf-outputs.outputs.EKS_CLUSTER_NAME }}"
         echo "ClusterName -- ${{ steps.extract.outputs.eks_cluster_name }}"
         aws eks update-kubeconfig \
           --region ${{ vars.TF_AWS_REGION }} \
