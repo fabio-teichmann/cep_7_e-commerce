@@ -48,7 +48,7 @@ data "aws_eks_cluster" "webshop" {
   depends_on = [ module.eks ]
 }
 data "aws_iam_openid_connect_provider" "eks" {
-  url = replace(data.aws_eks_cluster.webshop.identity[0].oidc[0].issuer, "https://", "")
+  url = data.aws_eks_cluster.webshop.identity[0].oidc[0].issuer
   # url = module.eks.main.identity[0].oidc[0].issuer
 }
 
@@ -84,7 +84,7 @@ data "aws_iam_policy_document" "eks_irsa_attach_roles" {
       "kinesis:PutRecords"
     ]
     resources = [
-      "kinesis:*"
+      "*"
     ]
   }
 }
