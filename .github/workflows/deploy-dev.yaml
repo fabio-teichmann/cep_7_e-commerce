@@ -78,11 +78,11 @@ jobs:
 
         svc_acc_annot=$(jq -r '.eks_irsa_role_arn.value' tf-outputs.json)
         echo "extracted value: $svc_acc_annot"
-        echo "svc_acc_annot=$svc_acc_annot" >> $GITHUB_OUTPUT
+        echo "svc_acc_annot=$svc_acc_annot" >> "$GITHUB_OUTPUT"
 
         svc_acc_name=$(jq -r '.svc_acc_name.value' tf-outputs.json)
         echo "extracted value: $svc_acc_name"
-        echo "svc_acc_name=$svc_acc_name" >> $GITHUB_OUTPUT
+        echo "svc_acc_name=$svc_acc_name" >> "$GITHUB_OUTPUT"
     
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
@@ -93,7 +93,6 @@ jobs:
     
     - name: Set up kubeconfig for EKS
       run: |
-        echo "ClusterName -- ${{ needs.tf-outputs.outputs.EKS_CLUSTER_NAME }}"
         echo "ClusterName -- ${{ steps.extract.outputs.eks_cluster_name }}"
         aws eks update-kubeconfig \
           --region ${{ vars.TF_AWS_REGION }} \
@@ -107,6 +106,6 @@ jobs:
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
           --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \
           --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} \
-          --set serviceAccount.annotations={ ${{steps.extrac.output.svc_acc_annot}} }
+          --set serviceAccount.annotations=\{ ${{steps.extract.outputs.svc_acc_annot}} \}
     
     
