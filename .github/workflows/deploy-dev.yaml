@@ -76,7 +76,11 @@ jobs:
         echo "extracted value: $kinesis_stream_name"
         echo "kinesis_stream_name=$kinesis_stream_name" >> "$GITHUB_OUTPUT"
 
-        svc_acc_name=$(jq -r '.eks_irsa_role_arn.value' tf-outputs.json)
+        svc_acc_annot=$(jq -r '.eks_irsa_role_arn.value' tf-outputs.json)
+        echo "extracted value: $svc_acc_annot"
+        echo "svc_acc_annot=$svc_acc_annot" >> $GITHUB_OUTPUT
+
+        svc_acc_name=$(jq -r '.svc_acc_name.value' tf-outputs.json)
         echo "extracted value: $svc_acc_name"
         echo "svc_acc_name=$svc_acc_name" >> $GITHUB_OUTPUT
     
@@ -102,6 +106,7 @@ jobs:
           --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
           --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \
-          --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }}
+          --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} \
+          --set serviceAccount.annotations={ ${{steps.extrac.output.svc_acc_annot}} }
     
     

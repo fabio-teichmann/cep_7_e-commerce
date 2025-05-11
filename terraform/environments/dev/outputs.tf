@@ -9,3 +9,7 @@ output "kinesis_stream_name" {
 output "eks_irsa_role_arn" {
     value = aws_iam_role.eks_irsa_role.arn
 }
+
+output "svc_acc_name" {
+    value = var.eks_svc_acc_name
+}

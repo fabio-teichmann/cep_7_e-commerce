@@ -12,7 +12,7 @@ spec:
       labels:
         app: {{ include "webshop.name" . }}
     spec:
-      serviceAccountName: {{ include "webshop.serviceAccount.name" . }} 
+      serviceAccountName: {{ .Values.serviceAccount.name" }} 
       containers:
         - name: webshop
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
