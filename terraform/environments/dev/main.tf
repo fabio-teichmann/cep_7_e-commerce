@@ -47,7 +47,7 @@ data "aws_eks_cluster" "webshop" {
   name = module.eks.cluster_name
 }
 data "aws_iam_openid_connect_provider" "eks" {
-  url = replace(data.aws_eks_cluster.webshop.main.identity[0].oidc[0].issuer, "https://", "")
+  url = replace(data.aws_eks_cluster.webshop.identity[0].oidc[0].issuer, "https://", "")
   # url = module.eks.main.identity[0].oidc[0].issuer
 }
 
