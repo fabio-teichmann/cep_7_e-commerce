@@ -78,7 +78,7 @@ jobs:
 
         svc_acc_annot=$(jq -r '.eks_irsa_role_arn.value' tf-outputs.json)
         echo "extracted value: $svc_acc_annot"
-        echo "svc_acc_annot={\"$svc_acc_annot\"}" >> "$GITHUB_OUTPUT"
+        echo "svc_acc_annot=$svc_acc_annot" >> "$GITHUB_OUTPUT"
 
         svc_acc_name=$(jq -r '.svc_acc_name.value' tf-outputs.json)
         echo "extracted value: $svc_acc_name"
@@ -106,4 +106,4 @@ jobs:
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
           --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \
           --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} \
-          --set serviceAccount.annotations=${{steps.extract.outputs.svc_acc_annot}}
+          --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${{steps.extract.outputs.svc_acc_annot}}
