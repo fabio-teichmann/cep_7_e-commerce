@@ -20,6 +20,8 @@ The goal is to have 2 separate actions, 1 to generate the state-lock infrastruct
 | Data / outputs from 1 job not available in other (separate) jobs | GitHub Action jobs are ephemeral | Use `uses: actions/upload-artifact` in job 1 and `uses: actions/download-artifact` in job 2 |
 | `terraform destroy` in separate job unable to see state from previous job | Trying to pass on `.tfstate` as artifact in GitHub Actions | :x: realized that artifact are tied to 1 job and cannot be passed between 2 separate jobs.<br>Will try to upload state file into S3 bucket instead. |
 | Destroy action doesn't know dynamic bucket name at job runtime. | Can't pass the bucket name between jobs if not through a bucket. But the bucket name is only known to the first job. | :white_check_mark: create **static bucket** to host such information. This trade-off is necessary to automate the state-lock portion. |
+| Parameters don't carry over between jobs | Runners are launched in their own environment. Maybe that's the cause? | :x: write params to `>> $GITHUB_OUTPUT` |
+| Flow doesn't appear correctly in GitHub UI and can't be triggered | One/some of the `uses:` statements incorrect. | |
 
 
 ### App deployment
@@ -32,11 +34,13 @@ The goal is to have 2 separate actions, 1 to generate the state-lock infrastruct
 ## Automation
 
 ### EKS-Cluster
+- a pod can only assume ONE service account role
+
 | :o: Issue | :mag_right: Investigation | :white_check_mark: Outcome |
 | :---- | :----- | :------- |
 | Application needs access to several environmental variables. Some of which are created dynamically (e.g., Kinesis stream name) others are tokens and need to passed in securely | (1) How to inject TerraForm outputs into the app | - for **Kinesis**, only the stream name is required (partition key calculated in app); this could be a hard-coded parameter inside the container but I'd like to automate this further to minimize maintenance across different components<br>- TF outputs can be ingested through CI/CD flow (GitHub Actions job) into the image build as a .env file |
  | (2) Inject secrets into Docker image through GitHub Actions? | |
-| | | |
+| Nodes unable to write to Kinesis Data Streams | Probably missing access rights. | EKS pods need OIDC (Open ID Connect) Federation to assume IAM roles to interact with services. Will put IRSA in place for the EKS cluster to allow access to Kinesis. |
 
 
 ## TerraForm

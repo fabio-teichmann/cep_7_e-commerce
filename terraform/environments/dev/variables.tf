@@ -6,3 +6,12 @@ variable "aws_region" {
 variable "image_repo" {
     type = string
 }
+
+variable "eks_namespace" {
+    type = string
+    default = "default"
+}
+
+variable "eks_svc_acc_name" {
+    type = string
+}

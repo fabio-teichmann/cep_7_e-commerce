@@ -42,12 +42,66 @@ module "vpc" {
   }
 }
 
+# IAM for EKS #########################
+data "aws_iam_openid_connect_provider" "eks" {
+  url = aws_eks_cluster.main.identity[0].oidc[0].issuer
+}
+
+data "aws_iam_policy_document" "eks_irsa_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type = "Federated"
+      identifiers = [data.aws_iam_openid_connect_provider.eks.arn]
+    }
+
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    condition {
+      test = "StringEquals"
+      values = "${replace(data.aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"
+      variable = ["system:serviceaccount:${var.eks_namespace}:${var.eks_svc_acc_name}"]
+    }
+  }
+}
+
+resource "aws_iam_role" "eks_irsa_role" {
+  name = "eks-irsa-role"
+  assume_role_policy = data.aws_iam_policy_document.eks_irsa_assume_role.json
+}
+
+data "aws_iam_policy_document" "eks_irsa_attach_roles" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "kinesis:PutRecord",
+      "kinesis:PutRecords"
+    ]
+    resources = [
+      "kinesis:*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "eks_irsa_policy" {
+  name = "eks-irsa-policies"
+  policy = data.aws_iam_policy_document.eks_irsa_attach_role.json 
+}
+
+resource "aws_iam_role_policy_attachment" "attach_kinesis" {
+  role = aws_iam_role.eks_irsa_role.name
+  policy_arn = aws_iam_policy.eks_irsa_policy.arn
+}
+
+
+# EKS Cluster ########################
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.21.0"  # Latest stable as of May 2025
 
   cluster_name    = "webshop-eks"
-  cluster_version = "1.29"
+  cluster_version = "1.32"
   subnet_ids      = module.vpc.public_subnets
   vpc_id          = module.vpc.vpc_id
 
