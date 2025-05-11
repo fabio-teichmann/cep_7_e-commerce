@@ -106,4 +106,4 @@ jobs:
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
           --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \
           --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} \
-          --set-string serviceAccount.annotations=${{steps.extract.outputs.svc_acc_annot}}
+          --set serviceAccount.annotations=${{steps.extract.outputs.svc_acc_annot}}
