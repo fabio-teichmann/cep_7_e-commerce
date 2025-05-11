@@ -32,7 +32,7 @@ jobs:
         terraform validate
         terraform apply -auto-approve \
           -var="image_repo=${{ vars.ECR_REPO }}" \
-          -var="eks_svc_acc_name=eks_aws_access"
+          -var="eks_svc_acc_name=eks-aws-access"
         terraform output -json > tf-outputs.json
     
     # - name: outputs to github env 

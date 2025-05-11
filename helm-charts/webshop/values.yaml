@@ -22,7 +22,7 @@ resources: {}
 serviceAccount:
   create: true
   name: ""
-  automount: false
+  automount: true
   annotations: {}
 
 ingress:
