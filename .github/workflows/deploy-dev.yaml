@@ -101,7 +101,7 @@ jobs:
           --set image.repository=${{ vars.DOCKERHUB_USER }}/webshop \
           --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
-          --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \ 
+          --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \
           --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }}
     
     
