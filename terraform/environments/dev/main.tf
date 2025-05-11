@@ -43,8 +43,12 @@ module "vpc" {
 }
 
 # IAM for EKS #########################
+data "aws_eks_cluster" "webshop" {
+  name = module.eks.cluster_name
+}
 data "aws_iam_openid_connect_provider" "eks" {
-  url = module.eks.main.identity[0].oidc[0].issuer
+  url = replace(data.aws_eks_cluster.webshop.main.identity[0].oidc[0].issuer, "https://", "")
+  # url = module.eks.main.identity[0].oidc[0].issuer
 }
 
 data "aws_iam_policy_document" "eks_irsa_assume_role" {
@@ -86,7 +90,7 @@ data "aws_iam_policy_document" "eks_irsa_attach_roles" {
 
 resource "aws_iam_policy" "eks_irsa_policy" {
   name = "eks-irsa-policies"
-  policy = data.aws_iam_policy_document.eks_irsa_attach_role.json 
+  policy = data.aws_iam_policy_document.eks_irsa_attach_roles.json 
 }
 
 resource "aws_iam_role_policy_attachment" "attach_kinesis" {
