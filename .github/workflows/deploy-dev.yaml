@@ -32,7 +32,7 @@ jobs:
         terraform validate
         terraform apply -auto-approve \
           -var="image_repo=${{ vars.ECR_REPO }}" \
-          -var="eks_svc_acc_name=eks_aws_access"
+          -var="eks_svc_acc_name=eks-aws-access"
         terraform output -json > tf-outputs.json
     
     # - name: outputs to github env 
@@ -76,9 +76,13 @@ jobs:
         echo "extracted value: $kinesis_stream_name"
         echo "kinesis_stream_name=$kinesis_stream_name" >> "$GITHUB_OUTPUT"
 
-        svc_acc_name=$(jq -r '.eks_irsa_role_arn.value' tf-outputs.json)
+        svc_acc_annot=$(jq -r '.eks_irsa_role_arn.value' tf-outputs.json)
+        echo "extracted value: $svc_acc_annot"
+        echo "svc_acc_annot=$svc_acc_annot" >> "$GITHUB_OUTPUT"
+
+        svc_acc_name=$(jq -r '.svc_acc_name.value' tf-outputs.json)
         echo "extracted value: $svc_acc_name"
-        echo "svc_acc_name=$svc_acc_name" >> $GITHUB_OUTPUT
+        echo "svc_acc_name=$svc_acc_name" >> "$GITHUB_OUTPUT"
     
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
@@ -89,7 +93,6 @@ jobs:
     
     - name: Set up kubeconfig for EKS
       run: |
-        echo "ClusterName -- ${{ needs.tf-outputs.outputs.EKS_CLUSTER_NAME }}"
         echo "ClusterName -- ${{ steps.extract.outputs.eks_cluster_name }}"
         aws eks update-kubeconfig \
           --region ${{ vars.TF_AWS_REGION }} \
@@ -101,7 +104,6 @@ jobs:
           --set image.repository=${{ vars.DOCKERHUB_USER }}/webshop \
           --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
-          --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \ 
-          --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }}
-    
-    
+          --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \
+          --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} \
+          --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${{steps.extract.outputs.svc_acc_annot}}
