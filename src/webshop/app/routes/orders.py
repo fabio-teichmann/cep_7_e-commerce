@@ -23,7 +23,7 @@ def process_order(product, user_id="auto_user", quantity=1, notes="auto ordered"
 
     order = {
         "user_id": user_id,
-        "product_id": product["id"],
+        "product_id": int(product["id"]),
         "product_name": product["name"],
         "product_price": product["price"],
         "quantity": quantity,
@@ -39,7 +39,7 @@ def process_order(product, user_id="auto_user", quantity=1, notes="auto ordered"
         logfire.info(f"Posting order to Kinesis stream: {stream_name}")
         response = kinesis_client.put_record(
             StreamName=stream_name,
-            Data=json.dumps(order).encode("utf-8"),
+            Data=f"{json.dumps(order)}\n".encode("utf-8"),
             PartitionKey=str(product["id"])
         )
         logfire.info(f"Kinesis response: {response}")
