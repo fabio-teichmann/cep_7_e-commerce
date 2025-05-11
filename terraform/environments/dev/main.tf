@@ -45,6 +45,7 @@ module "vpc" {
 # IAM for EKS #########################
 data "aws_eks_cluster" "webshop" {
   name = module.eks.cluster_name
+  depends_on = [ module.eks ]
 }
 data "aws_iam_openid_connect_provider" "eks" {
   url = replace(data.aws_eks_cluster.webshop.identity[0].oidc[0].issuer, "https://", "")
@@ -141,43 +142,13 @@ resource "aws_security_group_rule" "allow_http" {
 }
 
 
-# provider "helm" {
-#   kubernetes {
-#     config_path = "~/.kube/config"
-#   }
-# }
-
-# resource "helm_release" "webshop" {
-#   name       = "webshop"
-#   chart      = "${path.module}/helm-charts/webshop"
-#   namespace  = "default"
-#   create_namespace = false
-
-#   set {
-#     name  = "image.repository"
-#     value = "${var.image_repo}/webshop"
-#   }
-
-#   set {
-#     name  = "image.tag"
-#     value = "latest"
-#   }
-
-#   set {
-#     name  = "service.type"
-#     value = "LoadBalancer"
-#   }
-
-#   depends_on = [module.eks]
-# }
-
+# KINESIS ###################
 resource "random_string" "bucket_suffix" {
   length  = 6
   upper   = false
   special = false
   numeric = true
 }
-
 
 module "kinesis_pipeline" {
   source = "../../modules/aws_kinesis"
