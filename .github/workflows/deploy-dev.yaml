@@ -31,16 +31,17 @@ jobs:
         terraform init -backend-config=backend.config
         terraform validate
         terraform apply -auto-approve \
-          -var="image_repo=${{ vars.ECR_REPO }}"
+          -var="image_repo=${{ vars.ECR_REPO }}" \
+          -var="eks_svc_acc_name=eks_aws_access"
         terraform output -json > tf-outputs.json
     
-    - name: outputs to github env 
-      id: tf-outputs 
-      working-directory: terraform/environments/dev/
-      run: |
-        echo "KINESIS_STREAM_NAME=$(terraform output -raw kinesis_stream_name)" >> $GITHUB_OUTPUT
-        echo "EKS_CLUSTER_NAME=$(terraform output -raw eks_cluster_name)" >> $GITHUB_OUTPUT
-        echo "ClusterName -- ${{ steps.tf-outputs.outputs.EKS_CLUSTER_NAME }}"
+    # - name: outputs to github env 
+    #   id: tf-outputs 
+    #   working-directory: terraform/environments/dev/
+    #   run: |
+    #     echo "KINESIS_STREAM_NAME=$(terraform output -raw kinesis_stream_name)" >> $GITHUB_OUTPUT
+    #     echo "EKS_CLUSTER_NAME=$(terraform output -raw eks_cluster_name)" >> $GITHUB_OUTPUT
+    #     echo "ClusterName -- ${{ steps.tf-outputs.outputs.EKS_CLUSTER_NAME }}"
 
     - name: upload-artifact
       uses: actions/upload-artifact@v4
@@ -74,6 +75,10 @@ jobs:
         kinesis_stream_name=$(jq -r '.kinesis_stream_name.value' tf-outputs.json)
         echo "extracted value: $kinesis_stream_name"
         echo "kinesis_stream_name=$kinesis_stream_name" >> "$GITHUB_OUTPUT"
+
+        svc_acc_name=$(jq -r '.eks_irsa_role_arn.value' tf-outputs.json)
+        echo "extracted value: $svc_acc_name"
+        echo "svc_acc_name=$svc_acc_name" >> $GITHUB_OUTPUT
     
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
@@ -96,6 +101,7 @@ jobs:
           --set image.repository=${{ vars.DOCKERHUB_USER }}/webshop \
           --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
-          --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}}
+          --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \ 
+          --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }}
     
     
