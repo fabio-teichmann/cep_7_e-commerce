@@ -44,7 +44,7 @@ module "vpc" {
 
 # IAM for EKS #########################
 data "aws_iam_openid_connect_provider" "eks" {
-  url = aws_eks_cluster.main.identity[0].oidc[0].issuer
+  url = module.eks.main.identity[0].oidc[0].issuer
 }
 
 data "aws_iam_policy_document" "eks_irsa_assume_role" {
