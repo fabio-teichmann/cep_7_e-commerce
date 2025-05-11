@@ -64,8 +64,8 @@ data "aws_iam_policy_document" "eks_irsa_assume_role" {
 
     condition {
       test = "StringEquals"
-      values = "${replace(data.aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"
-      variable = ["system:serviceaccount:${var.eks_namespace}:${var.eks_svc_acc_name}"]
+      values = ["${replace(data.aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"]
+      variable = "system:serviceaccount:${var.eks_namespace}:${var.eks_svc_acc_name}"
     }
   }
 }
