@@ -81,7 +81,8 @@ data "aws_iam_policy_document" "eks_irsa_attach_roles" {
     effect = "Allow"
     actions = [
       "kinesis:PutRecord",
-      "kinesis:PutRecords"
+      "kinesis:PutRecords",
+      "es:ESHttp*"
     ]
     resources = [
       "*"
@@ -158,4 +159,15 @@ module "kinesis_pipeline" {
   data_lake                       = "cep-7-data-lake-${random_string.bucket_suffix.result}"
   data_lake_prefix_firehose       = "landing_zone/firehose_stream"
   data_lake_error_prefix_firehose = "landing_zone/firehose_stream_errors"
+}
+
+
+# OPENSEARCH ################
+module "opensearch" {
+  source = "../../modules/aws_opensearch"
+
+  domain = "product-catalog"
+  eks_app_role_arn = aws_iam_role.eks_irsa_role.arn
+
+  depends_on = [module.eks]
 }

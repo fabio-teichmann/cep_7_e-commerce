@@ -5,3 +5,4 @@ metadata:
 data:
   KINESIS_STREAM_NAME: {{ .Values.env.kinesisStreamName }}
   LOGFIRE_URL: {{ .Values.env.logfireUrl }}
+  ELASTICSEARCH_URL: {{ .Values.env.opensearchUrl }}

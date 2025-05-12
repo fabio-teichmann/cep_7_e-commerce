@@ -8,6 +8,7 @@ image:
 env:
   kinesisStreamName: ""
   logfireUrl: "" 
+  opensearchUrl: ""
 
 secrets:  
   logfireToken: "" 
