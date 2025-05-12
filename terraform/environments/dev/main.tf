@@ -42,6 +42,30 @@ module "vpc" {
   }
 }
 
+resource "aws_security_group" "emr_master_sg" {
+  name   = "emr-master-sg"
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    self        = true
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "emr-master-sg"
+  }
+}
+
+
 # IAM for EKS #########################
 data "aws_eks_cluster" "webshop" {
   name = module.eks.cluster_name
@@ -170,4 +194,16 @@ module "opensearch" {
   eks_app_role_arn = aws_iam_role.eks_irsa_role.arn
 
   depends_on = [module.eks]
+}
+
+
+# ICEBERG (EMR) ##############
+module "iceberg" {
+  source = "../../modules/aws_emr_iceberg"
+
+  s3_data_lake_id = module.kinesis_pipeline.data_lake
+  emr_core_sg = module.vpc.default_security_group_id
+  emr_master_sg = aws_security_group.emr_master_sg.id
+  emr_subnet_id = module.vpc.public_subnets[0]
+  data_lake_prefix_firehose = module.kinesis_pipeline.landing_zone_kfh
 }

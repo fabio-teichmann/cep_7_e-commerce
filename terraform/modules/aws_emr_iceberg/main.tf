@@ -304,12 +304,12 @@ resource "aws_iam_policy_attachment" "lambda_emr_attach" {
 
 resource "aws_lambda_function" "trigger_emr_step" {
     s3_bucket = var.s3_static
-  s3_key         = "scripts/lambda_emr_trigger.zip"  # Package the above script
+  s3_key         = "scripts/lambda_emr_trigger.zip"  
   function_name    = "TriggerEMRStep"
   role             = aws_iam_role.lambda_emr_trigger.arn
   handler          = "lambda_emr_trigger.lambda_handler"
   runtime          = "python3.11"
-  source_code_hash = filebase64sha256("lambda_emr_trigger.zip")
+  source_code_hash = filebase64sha256("../../../lambda_emr_trigger.zip")
   timeout          = 30
 
   environment {
