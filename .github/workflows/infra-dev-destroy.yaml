@@ -13,6 +13,10 @@ jobs:
 
     - name: setup-terraform
       uses: hashicorp/setup-terraform@v3
+    
+    - name: package-and-upload-scripts
+      run: |
+        zip lambda_emr_trigger.zip scripts/lambda/emr_step_raw_bronze.py
 
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
