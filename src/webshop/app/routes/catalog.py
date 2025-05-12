@@ -1,27 +1,29 @@
 """ catalog API """
 
 from flask import Blueprint, render_template
-# import json
+import json
 
 bp = Blueprint("catalog", __name__, url_prefix="/catalog")
 
 
 def get_products():
     """abstraction to retrieve product catalog"""
-    return [
-        {
-            "id": 1,
-            "name": "Laptop",
-            "price": 999,
-            "description": "The laptop of your dreams",
-        },
-        {
-            "id": 2,
-            "name": "Keyboard",
-            "price": 49,
-            "description": "Basic keyboard for everyday use",
-        },
-    ]
+    with open("../mock_data.json", "r") as f:
+        return json.load(f)
+    # return [
+    #     {
+    #         "id": 1,
+    #         "name": "Laptop",
+    #         "price": 999,
+    #         "description": "The laptop of your dreams",
+    #     },
+    #     {
+    #         "id": 2,
+    #         "name": "Keyboard",
+    #         "price": 49,
+    #         "description": "Basic keyboard for everyday use",
+    #     },
+    # ]
 
 
 @bp.route("/")
