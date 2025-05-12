@@ -14,11 +14,7 @@ AUTO_ORDER_FLAG = {"active": False}
 
 kinesis_client = boto3.client("kinesis", region_name="us-east-1")
 
-<<<<<<< HEAD
-def process_order(product, user_id="auto_user", quantity=1, notes="auto ordered"):
-=======
 def process_order(product, user_id=0, quantity=1, notes="auto ordered"):
->>>>>>> db0ce9a (iceberg carryover)
     """Processes the order and posts it to a Kinesis Stream.
     Simulates order failure for ~20% of cases."""
     
@@ -27,14 +23,6 @@ def process_order(product, user_id=0, quantity=1, notes="auto ordered"):
         return False
 
     order = {
-<<<<<<< HEAD
-        "user_id": user_id,
-        "product_id": int(product["id"]),
-        "product_name": product["name"],
-        "product_price": product["price"],
-        "quantity": quantity,
-        "notes": notes
-=======
         "customer_id": user_id,
         "product_id": int(product["id"]),
         "product_name": product["name"],
@@ -43,7 +31,6 @@ def process_order(product, user_id=0, quantity=1, notes="auto ordered"):
         "quantity": quantity,
         "timestamp": datetime.now(),
         "category": product["category"]
->>>>>>> db0ce9a (iceberg carryover)
     }
 
     stream_name = current_app.config.get("KINESIS_STREAM_NAME")
