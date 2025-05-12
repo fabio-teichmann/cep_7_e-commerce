@@ -43,10 +43,10 @@ from pyspark.sql import SparkSession
 
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import input_file_name, col, expr
+from pyspark.sql.functions import input_file_name, expr
 from pyspark.sql.types import StructType, StringType, FloatType, IntegerType
 
-import uuid
+# import uuid
 
 # === Config ===
 DATA_LAKE_BUCKET = "cep-7-data-lake-tl9bg4"
