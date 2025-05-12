@@ -167,5 +167,5 @@ module "opensearch" {
   source = "../../modules/aws_opensearch"
 
   domain = "product_catalog"
-  eks_app_role_arn = module.eks.eks_irsa_role.arn
+  eks_app_role_arn = aws_iam_role.eks_irsa_role.arn
 }
