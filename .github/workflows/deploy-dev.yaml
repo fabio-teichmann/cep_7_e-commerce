@@ -84,10 +84,9 @@ jobs:
         echo "extracted value: $svc_acc_name"
         echo "svc_acc_name=$svc_acc_name" >> "$GITHUB_OUTPUT"
 
-        opensearch_domain=$(jq -r '.opensearch_domain.value' tf-outputs.json)
-        echo "extracted value: $opensearch_domain"
-        echo "opensearch_domain=$opensearch_domain" >> "$GITHUB_OUTPUT"
-        echo "opensearch_url=https://$opensearch_domain.${{ vars.TF_AWS_REGION }}.es.amazonaws.com" >> "$GITHUB_OUTPUT"
+        opensearch_endpoint=$(jq -r '.opensearch_endpoint.value' tf-outputs.json)
+        echo "extracted value: $opensearch_endpoint"
+        echo "opensearch_url=$opensearch_endpoint" >> "$GITHUB_OUTPUT"
     
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4

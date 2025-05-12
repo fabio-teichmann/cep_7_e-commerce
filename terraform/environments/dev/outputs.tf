@@ -17,3 +17,7 @@ output "svc_acc_name" {
 output "opensearch_domain" {
     value = module.opensearch.opensearch_domain
 }
+
+output "opensearch_endpoint" {
+  value = module.opensearch.opensearch_endpoint
+}
