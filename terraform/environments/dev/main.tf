@@ -171,3 +171,15 @@ module "opensearch" {
 
   depends_on = [module.eks]
 }
+
+
+# ICEBERG (EMR) ##############
+module "iceberg" {
+  source = "../../modules/aws_emr_iceberg"
+
+  s3_data_lake_id = module.kinesis_pipeline.data_lake.id
+  emr_core_sg = module.vpc.default_security_group_id
+  emr_master_sg = module.vpc.default_security_group_id
+  emr_subnet_id = module.vpc.public_subnets[0]
+  data_lake_prefix_firehose = module.kinesis_pipeline.landing_zone_kfh
+}
