@@ -84,7 +84,7 @@ jobs:
         echo "extracted value: $svc_acc_name"
         echo "svc_acc_name=$svc_acc_name" >> "$GITHUB_OUTPUT"
 
-        opensearch_domain=$(jg -r '.opensearch_domain.value' tf-outputs.json)
+        opensearch_domain=$(jq -r '.opensearch_domain.value' tf-outputs.json)
         echo "extracted value: $opensearch_domain"
         echo "opensearch_domain=$opensearch_domain" >> "$GITHUB_OUTPUT"
         echo "opensearch_url=https://$opensearch_domain.${{ vars.TF_AWS_REGION }}.es.amazonaws.com" >> "$GITHUB_OUTPUT"
