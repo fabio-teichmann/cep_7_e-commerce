@@ -166,6 +166,6 @@ module "kinesis_pipeline" {
 module "opensearch" {
   source = "../../modules/aws_opensearch"
 
-  domain = "product_catalog"
+  domain = "product-catalog"
   eks_app_role_arn = aws_iam_role.eks_irsa_role.arn
 }
