@@ -1,3 +1,3 @@
-output "openseach_domain" {
+output "opensearch_domain" {
     value = aws_opensearch_domain.product_catalog.domain_name
 }

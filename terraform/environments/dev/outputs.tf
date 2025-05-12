@@ -14,6 +14,6 @@ output "svc_acc_name" {
     value = var.eks_svc_acc_name
 }
 
-output "openseach_domain" {
-    value = module.opensearch.openseach_domain
+output "opensearch_domain" {
+    value = module.opensearch.opensearch_domain
 }
