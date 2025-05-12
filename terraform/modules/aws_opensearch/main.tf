@@ -25,6 +25,10 @@ resource "aws_opensearch_domain" "product_catalog" {
         instance_count = 1
     }
 
+    ebs_options {
+      ebs_enabled = false
+    }
+
     access_policies = data.aws_iam_policy_document.open_search_access.json
 
     tags = {
