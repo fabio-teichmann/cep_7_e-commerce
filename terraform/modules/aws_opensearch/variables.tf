@@ -1,5 +1,5 @@
 variable "domain" {
-    default = "product_catalog"
+    default = "product-catalog"
 }
 
 variable "eks_app_role_arn" {
