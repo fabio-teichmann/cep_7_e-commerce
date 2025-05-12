@@ -21,12 +21,14 @@ resource "aws_opensearch_domain" "product_catalog" {
     engine_version = "OpenSearch_1.0"
 
     cluster_config {
-        instance_type = "r4.large.search"
+        instance_type = "t3.small.search"
         instance_count = 1
     }
 
     ebs_options {
-      ebs_enabled = false
+      ebs_enabled = true 
+      volume_size = 10
+      volume_type = "gp3"
     }
 
     access_policies = data.aws_iam_policy_document.open_search_access.json
