@@ -29,7 +29,7 @@ def process_order(product, user_id=0, quantity=1, notes="auto ordered"):
         "product_description": product["description"],
         "price": product["price"],
         "quantity": quantity,
-        "timestamp": datetime.now(),
+        "timestamp": datetime.now().isoformat(),
         "category": product["category"]
     }
 
