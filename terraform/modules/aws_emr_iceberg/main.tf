@@ -230,3 +230,107 @@ resource "aws_emr_cluster" "iceberg_cluster" {
     }
 
 }
+
+
+# # EMR STEPS with automatic triggers #############
+# resource "aws_emr_step" "raw_to_bronze" {
+#   cluster_id = aws_emr_cluster.iceberg_cluster.id
+#   name       = "RawToBronzeIngestion"
+#   action_on_failure = "CONTINUE"
+
+#   hadoop_jar_step {
+#     jar = "command-runner.jar"
+#     args = [
+#       "spark-submit",
+#       "--deploy-mode", "cluster",
+#       "--conf", "spark.sql.catalog.glue_catalog=org.apache.iceberg.spark.SparkCatalog",
+#       "--conf", "spark.sql.catalog.glue_catalog.warehouse=s3://${var.s3_data_lake_id}/bronze",
+#       "--conf", "spark.sql.catalog.glue_catalog.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog",
+#       "s3://${var.s3_static}/scripts/raw_to_bronze.py"
+#     ]
+#   }
+# }
+
+resource "aws_cloudwatch_event_rule" "run_emr_step_every_5min" {
+  name                = "run-emr-step-every-5min"
+  schedule_expression = "rate(5 minutes)"
+}
+
+resource "aws_iam_role" "lambda_emr_trigger" {
+  name = "lambda-emr-trigger-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_policy_attachment" "lambda_basic_execution" {
+  name       = "attach-basic-lambda"
+  roles      = [aws_iam_role.lambda_emr_trigger.name]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_policy" "lambda_emr_permissions" {
+  name = "lambda-emr-permissions"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "elasticmapreduce:AddJobFlowSteps",
+          "elasticmapreduce:DescribeCluster",
+          "elasticmapreduce:ListClusters"
+        ],
+        Resource = "*",
+        Effect   = "Allow"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy_attachment" "lambda_emr_attach" {
+  name       = "lambda-emr-attach"
+  roles      = [aws_iam_role.lambda_emr_trigger.name]
+  policy_arn = aws_iam_policy.lambda_emr_permissions.arn
+}
+
+resource "aws_lambda_function" "trigger_emr_step" {
+    s3_bucket = var.s3_static
+  s3_key         = "scripts/lambda_emr_trigger.zip"  # Package the above script
+  function_name    = "TriggerEMRStep"
+  role             = aws_iam_role.lambda_emr_trigger.arn
+  handler          = "lambda_emr_trigger.lambda_handler"
+  runtime          = "python3.11"
+  source_code_hash = filebase64sha256("lambda_emr_trigger.zip")
+  timeout          = 30
+
+  environment {
+    variables = {
+        CLUSTER_ID = aws_emr_cluster.iceberg_cluster.id 
+        PATH_TO_SCRIPT = "${var.s3_static}/scripts/raw_to_bronze.py"
+    }
+  }
+}
+
+
+resource "aws_cloudwatch_event_target" "invoke_lambda" {
+  rule      = aws_cloudwatch_event_rule.run_emr_step_every_5min.name
+  target_id = "TriggerEMRStep"
+  arn       = aws_lambda_function.trigger_emr_step.arn
+}
+
+resource "aws_lambda_permission" "allow_cwe_to_call_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.trigger_emr_step.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.run_emr_step_every_5min.arn
+}
