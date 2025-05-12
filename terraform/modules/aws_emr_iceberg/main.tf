@@ -309,7 +309,7 @@ resource "aws_lambda_function" "trigger_emr_step" {
   role             = aws_iam_role.lambda_emr_trigger.arn
   handler          = "lambda_emr_trigger.lambda_handler"
   runtime          = "python3.11"
-  source_code_hash = filebase64sha256("scripts/lambda_emr_trigger.zip")
+  source_code_hash = filebase64sha256("../../../lambda_emr_trigger.zip")
   timeout          = 30
 
   environment {
