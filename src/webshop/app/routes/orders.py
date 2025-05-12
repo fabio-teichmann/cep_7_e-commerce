@@ -26,7 +26,7 @@ def process_order(product, user_id=0, quantity=1, notes="auto ordered"):
         "customer_id": user_id,
         "product_id": int(product["id"]),
         "product_name": product["name"],
-        "product_description": product["product_description"],
+        "product_description": product["description"],
         "price": product["price"],
         "quantity": quantity,
         "timestamp": datetime.now(),
