@@ -13,3 +13,7 @@ output "eks_irsa_role_arn" {
 output "svc_acc_name" {
     value = var.eks_svc_acc_name
 }
+
+output "openseach_domain" {
+    value = module.opensearch.openseach_domain
+}

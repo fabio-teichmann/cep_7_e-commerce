@@ -83,6 +83,11 @@ jobs:
         svc_acc_name=$(jq -r '.svc_acc_name.value' tf-outputs.json)
         echo "extracted value: $svc_acc_name"
         echo "svc_acc_name=$svc_acc_name" >> "$GITHUB_OUTPUT"
+
+        opensearch_domain=$(jg -r '.opensearch_domain.value' tf-outputs.json)
+        echo "extracted value: $opensearch_domain"
+        echo "opensearch_domain=$opensearch_domain" >> "$GITHUB_OUTPUT"
+        echo "opensearch_url=https://$opensearch_domain.${{ vars.TF_AWS_REGION }}.es.amazonaws.com" >> "$GITHUB_OUTPUT"
     
     - name: authenticate-to-aws
       uses: aws-actions/configure-aws-credentials@v4
@@ -104,6 +109,7 @@ jobs:
           --set image.repository=${{ vars.DOCKERHUB_USER }}/webshop \
           --set env.kinesisStreamName=${{ steps.extract.outputs.kinesis_stream_name }} \
           --set env.logfireUrl=${{ vars.LOGFIRE_URL }} \
+          --set env.opensearchUrl=${{ steps.extract.outputs.opensearch_url }} \
           --set secrets.logfireToken=${{ secrets.LOGFIRE_TOKEN}} \
           --set serviceAccount.name=${{ steps.extract.outputs.svc_acc_name }} \
           --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${{steps.extract.outputs.svc_acc_annot}}

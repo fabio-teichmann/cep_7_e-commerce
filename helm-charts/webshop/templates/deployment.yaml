@@ -35,3 +35,8 @@ spec:
                 secretKeyRef:
                   name: app-secrets 
                   key: LOGFIRE_TOKEN 
+            - name: ELASTICSEARCH_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: ELASTICSEARCH_URL
